@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36310.24 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetPraktica", "NetPraktica\NetPraktica.csproj", "{F4091A8F-18D7-4AA7-99D3-978DE7EA3DE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{EF0E18AE-0358-49C0-B437-7FEF1C6E3F1D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F4091A8F-18D7-4AA7-99D3-978DE7EA3DE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4091A8F-18D7-4AA7-99D3-978DE7EA3DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4091A8F-18D7-4AA7-99D3-978DE7EA3DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4091A8F-18D7-4AA7-99D3-978DE7EA3DE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF0E18AE-0358-49C0-B437-7FEF1C6E3F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF0E18AE-0358-49C0-B437-7FEF1C6E3F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF0E18AE-0358-49C0-B437-7FEF1C6E3F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF0E18AE-0358-49C0-B437-7FEF1C6E3F1D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9C30A27-4CBC-4CF0-97F8-E51F82C9E42C}
+	EndGlobalSection
+EndGlobal
