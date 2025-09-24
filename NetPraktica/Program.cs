@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 namespace NetPraktica
 {
     internal class Program
@@ -10,6 +11,8 @@ namespace NetPraktica
             //FirstTask();
             //SendSquare();
             //SendTime();
+            ChatServer chat = new ChatServer();
+            chat.Start();
         }
         static void FirstTask()
         {
@@ -72,7 +75,7 @@ namespace NetPraktica
             }
         }
 
-        static void SendTime() 
+        static void SendTime()
         {
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -123,5 +126,93 @@ namespace NetPraktica
 
         }
 
+    }
+
+    public class ChatServer : IDisposable
+    {
+        Dictionary<string, Socket> clients = new();
+        Dictionary<string, string> chat = new();
+        object lockObject = new();
+        Socket serverSocket;
+
+        public ChatServer()
+        {
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            serverSocket.Bind(new IPEndPoint(ipAddress, 4252));
+            serverSocket.Listen(10);
+            Console.WriteLine("Chat server is listening on");
+        }
+
+        public void Acepter()
+        {
+            while (true)
+            {
+                Socket client = serverSocket.Accept();
+                string name = client.RemoteEndPoint.ToString() + ":" + Guid.NewGuid().ToString();
+                lock (lockObject)
+                {
+                    clients.Add(name, client);
+                    chat.Add(name, "");
+                }
+                Console.WriteLine($"Client connected: {name} at {DateTime.Now}");
+                Thread handle = new(() => HandleClient(client, name));
+                handle.IsBackground = true;
+                handle.Start();
+            }
+        }
+
+        public void HandleClient(Socket clSok, string name)
+        {
+            while (true)
+            {
+                byte[] bytes = new byte[1024];
+                int receivedBytes = clSok.Receive(bytes);
+                string receivedText = System.Text.Encoding.UTF8.GetString(bytes, 0, receivedBytes).Trim().ToLower();
+
+                string[] comand = receivedText.Split(';');
+                if (comand[0] == "send" && comand.Length >= 3)
+                {
+                    string recipient = comand[1];
+                    string message = comand[2];
+
+                    chat[recipient] += $"{name}: {message}\n";
+                    clSok.Send(System.Text.Encoding.UTF8.GetBytes("Message sent."));
+                }
+                else if (comand[0] == "history" && comand.Length == 2)
+                {
+                    string chatWith = comand[1];
+                    string history = chat.ContainsKey(chatWith) ? chat[chatWith] : "No chat history.";
+                    byte[] textSnd = System.Text.Encoding.UTF8.GetBytes(history);
+                    clSok.Send(textSnd);
+                }
+                else if (comand[0] == "list")
+                {
+                    string userList = string.Join("\n", clients.Keys);
+                    byte[] textSnd = System.Text.Encoding.UTF8.GetBytes(userList);
+                    clSok.Send(textSnd);
+                }
+            }
+        }
+
+        public void Start()
+        {
+            Thread accepterThread = new Thread(Acepter);
+            accepterThread.IsBackground = true;
+            accepterThread.Start();
+            while (true)
+            {
+                Thread.Sleep(1000);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var client in clients.Values)
+            {
+                client.Close();
+            }
+            serverSocket.Close();
+        }
     }
 }

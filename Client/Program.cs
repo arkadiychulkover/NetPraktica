@@ -11,6 +11,7 @@ namespace Client
             //FirstTask();
             //GetSquare();
             //GetTime();
+            chatClient();
         }
 
         static void FirstTask()
@@ -58,6 +59,32 @@ namespace Client
                 Console.WriteLine($"{receivedText}");
                 receivedBytes = 0;
             }
+        }
+
+        static void chatClient() 
+        {
+            IPAddress iPAddress = IPAddress.Parse("127.0.0.1");
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(new IPEndPoint(iPAddress, 4252));
+            Console.WriteLine("socket conected");
+            helper();
+            byte[] buffer = new byte[1024];
+            while (true)
+            {
+                byte[] textSnd = System.Text.Encoding.UTF8.GetBytes(Console.ReadLine());
+                socket.Send(textSnd);
+                int receivedBytes = socket.Receive(buffer);
+                string receivedText = System.Text.Encoding.UTF8.GetString(buffer, 0, receivedBytes);
+                Console.WriteLine($"Received: {receivedText}");
+            }
+        }
+
+        static void helper()
+        {
+            Console.WriteLine("Commands:");
+            Console.WriteLine("1 - send;name;message");
+            Console.WriteLine("2 - history");
+            Console.WriteLine("3 - list");
         }
     }
 }
